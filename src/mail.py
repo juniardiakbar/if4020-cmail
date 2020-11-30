@@ -3,6 +3,7 @@ import email
 import smtplib
 import imaplib
 import os
+import db
 from dotenv import load_dotenv
 
 def get_mpart(mail):
@@ -33,6 +34,8 @@ class Mail:
         self.imap = "imap.gmail.com"
         self.imap_port = 993
 
+        self.db = db.Database()
+
     def send(self, to, subject, message):
         mail = smtplib.SMTP(self.smtp, 587)
         mail.ehlo()
@@ -43,6 +46,7 @@ class Mail:
         mail.sendmail(self.email, to, data.encode('utf-8'))
         mail.quit()
         
+        self.db.create(to, subject, message)
         return True
 
     def inbox(self, page=1, limit=10):
@@ -69,6 +73,7 @@ class Mail:
                     email_from = msg['from']
 
                     obj = {}
+                    obj["id"] = str(int(id_list[i]))
                     obj["from"] = email_from
                     obj["subject"] = email_subject
                     obj["body"] = email_body
