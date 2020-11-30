@@ -1,6 +1,6 @@
 # cmail (Cryptography Mail)
 
-Penerapan Elliptic Curve Cryptography dan SHA-3 untuk Menandatangani Surel pada Perangkat Mobile
+Penerapan Elliptic Curve Cryptography dan SHA-3 untuk Menandatangani Surel
 
 ## Request
 
@@ -70,4 +70,4 @@ Pake mongodb. Tabel dan cluster akan otomatis kebuah setiap berhasil kirim pesan
 
 ## Env
 
-Bikin `.env` ya pake contoh yang di `.env.example`. Jangan lupa setting akun gmial biar [<i>less secure</i>](https://support.google.com/a/answer/6260879?hl=en)
+Bikin `.env` ya pake contoh yang di `.env.example`. Jangan lupa setting akun gmail biar [<i>less secure</i>](https://support.google.com/a/answer/6260879?hl=en)
