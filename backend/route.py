@@ -19,7 +19,8 @@ def send():
     encrypt_mode = body['encryptMode']
     
     try:
-        if (encrypt_key is not None and encrypt_mode is not None):
+        if (encrypt_key != "" and encrypt_mode != ""):
+            subject = "ENC - " + subject 
             message = feistel.encrypt(encrypt_key, message, encrypt_mode)
 
         m.send(to, subject, message)
@@ -34,9 +35,12 @@ def send():
 @cross_origin(origin='localhost')
 def inbox():
     page = request.args.get('page')
+    encrypt_key = request.args.get('encryptKey')
+    encrypt_mode = request.args.get('encryptMode')
+
     if (page is None): page = 1
     try:
-        data = m.inbox(page)
+        data = m.inbox(page, encrypt_key, encrypt_mode)
         return jsonify({"status": "200", "message": "Success get inbox", "data": data})
 
     except Exception as e:
@@ -47,9 +51,12 @@ def inbox():
 @cross_origin(origin='localhost')
 def sent():
     page = request.args.get('page')
+    encrypt_key = request.args.get('encryptKey')
+    encrypt_mode = request.args.get('encryptMode')
+    
     if (page is None): page = 1
     try:
-        data = m.sent(page)
+        data = m.sent(page, encrypt_key, encrypt_mode)
         return jsonify({"status": "200", "message": "Success get sent mail", "data": data})
 
     except Exception as e:
