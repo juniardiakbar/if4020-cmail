@@ -3,13 +3,15 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import "./styles.scss";
 
-function Send() {
+function Send({ encryptKey, encryptMode }) {
   const [inbox, setInbox] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
   const refresh = () => {
-    fetch("http://127.0.0.1:5000/inbox")
+    fetch(
+      `http://127.0.0.1:5000/inbox?encryptKey=${encryptKey}&encryptMode=${encryptMode}`
+    )
       .then((response) => response.json())
       .then(({ data }) => setInbox(data));
     setHasMore(true);
@@ -19,7 +21,11 @@ function Send() {
   useEffect(refresh, []);
 
   const getMoreInbox = () => {
-    fetch(`http://127.0.0.1:5000/inbox?page=${page + 1}`)
+    fetch(
+      `http://127.0.0.1:5000/inbox?encryptKey=${encryptKey}&encryptMode=${encryptMode}&page=${
+        page + 1
+      }`
+    )
       .then((response) => response.json())
       .then(({ data }) => {
         setHasMore(hasMore && data.length);
@@ -34,7 +40,7 @@ function Send() {
       dataLength={inbox.length}
       next={getMoreInbox}
       hasMore={hasMore}
-      loader={<h4>Membuka pesan...</h4>}
+      loader={<p>Membuka pesan...</p>}
       endMessage={
         <p style={{ textAlign: "center" }}>
           <b>--- semua pesan sudah terbaca ---</b>

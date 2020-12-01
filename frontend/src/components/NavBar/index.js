@@ -1,6 +1,6 @@
 import "./styles.scss";
 
-function NavBar({ page, setPage }) {
+function NavBar({ page, setPage, setEncryptKey, encryptMode, setEncryptMode }) {
   return (
     <ul>
       <li>
@@ -27,6 +27,19 @@ function NavBar({ page, setPage }) {
           Inbox
         </span>
       </li>
+      <span className="encryption">
+        <select onChange={(e) => setEncryptMode(e.target.value)}>
+          <option value="">-- encrypt mode --</option>
+          <option value="ecb">ECB</option>
+          <option value="cbc">CBC</option>
+          <option value="counter">Counter</option>
+        </select>
+        <input
+          onChange={(e) => setEncryptKey(e.target.value)}
+          placeholder="Encrypt key..."
+          disabled={!encryptMode}
+        />
+      </span>
     </ul>
   );
 }

@@ -15,13 +15,22 @@ const PAGE_CLASS = {
 
 function App() {
   const [page, setPage] = useState("send");
+  const [encryptKey, setEncryptKey] = useState("");
+  const [encryptMode, setEncryptMode] = useState("");
+
   const PageClass = PAGE_CLASS[page];
 
   return (
     <div className="App">
-      <NavBar page={page} setPage={setPage} />
+      <NavBar
+        page={page}
+        setPage={setPage}
+        setEncryptKey={setEncryptKey}
+        setEncryptMode={setEncryptMode}
+        encryptMode={encryptMode}
+      />
       <header className="App-header">
-        <PageClass />
+        <PageClass encryptKey={encryptKey} encryptMode={encryptMode} />
       </header>
     </div>
   );

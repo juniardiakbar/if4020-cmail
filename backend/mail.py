@@ -4,6 +4,7 @@ import smtplib
 import imaplib
 import os
 from dotenv import load_dotenv
+import algorithms.feistel as feistel
 
 def get_mpart(mail):
     maintype = mail.get_content_maintype()
@@ -32,6 +33,7 @@ class Mail:
         self.smtp_port = 587
         self.imap = "imap.gmail.com"
         self.imap_port = 993
+        self.limit = 10
 
     def send(self, to, subject, message):
         mail = smtplib.SMTP(self.smtp, 587)
@@ -43,7 +45,7 @@ class Mail:
         mail.sendmail(self.email, [to], data.encode('utf-8'))
         mail.quit()
 
-    def inbox(self, page=1, limit=10):
+    def inbox(self, page=1, encrypt_key="", encrypt_mode=""):
         output = []
         
         mail = imaplib.IMAP4_SSL(self.imap)
@@ -55,9 +57,9 @@ class Mail:
         id_list = mail_ids.split()
 
         page = int(page)
-        i = (page - 1) * limit
+        i = (page - 1) * self.limit
         count = 0
-        while (i < len(id_list) and count < limit):
+        while (i < len(id_list) and count < self.limit):
             status, data = mail.fetch(str.encode(str(int(id_list[i]))), '(RFC822)')
             
             for response_part in data:
@@ -66,6 +68,12 @@ class Mail:
                     email_subject = msg['subject']
                     email_body = get_mail_body(msg)
                     email_from = msg['from']
+
+                    type_email = email_subject.split(" - ")
+                    if (type_email[0] == "ENC" and encrypt_key != "" and encrypt_mode != ""):
+                        email_body = email_body.rstrip("\r\n")
+                        email_body = email_body.replace("\r\n", "\n")
+                        email_body = feistel.decrypt(encrypt_key, email_body, encrypt_mode)
 
                     obj = {}
                     obj["id"] = str(int(id_list[i]))
@@ -80,7 +88,7 @@ class Mail:
 
         return output
 
-    def sent(self, page=1, limit=10):
+    def sent(self, page=1, encrypt_key="", encrypt_mode=""):
         output = []
         
         mail = imaplib.IMAP4_SSL(self.imap)
@@ -92,9 +100,9 @@ class Mail:
         id_list = mail_ids.split()
 
         page = int(page)
-        i = (page - 1) * limit
+        i = (page - 1) * self.limit
         count = 0
-        while (i < len(id_list) and count < limit):
+        while (i < len(id_list) and count < self.limit):
             status, data = mail.fetch(str.encode(str(int(id_list[i]))), '(RFC822)')
             
             for response_part in data:
@@ -103,6 +111,12 @@ class Mail:
                     email_subject = msg['subject']
                     email_body = get_mail_body(msg)
                     email_to = msg['bcc']
+
+                    type_email = email_subject.split(" - ")
+                    if (type_email[0] == "ENC" and encrypt_key != "" and encrypt_mode != ""):
+                        email_body = email_body.rstrip("\r\n")
+                        email_body = email_body.replace("\r\n", "\n")
+                        email_body = feistel.decrypt(encrypt_key, email_body, encrypt_mode)
 
                     obj = {}
                     obj["id"] = str(int(id_list[i]))
