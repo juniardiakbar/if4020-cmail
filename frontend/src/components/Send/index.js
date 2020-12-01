@@ -3,12 +3,10 @@ import swal from "sweetalert";
 
 import "./styles.scss";
 
-function Send() {
+function Send({ encryptKey, encryptMode }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
-  const [encryptKey, setEncryptKey] = useState("");
-  const [encryptMode, setEncryptMode] = useState("");
 
   const sendEmail = () => {
     fetch("http://127.0.0.1:5000/send", {
@@ -66,18 +64,6 @@ function Send() {
           placeholder="Email content..."
         />
       </div>
-      <select onChange={(e) => setEncryptMode(e.target.value)}>
-        <option value="">-- encrypt mode --</option>
-        <option value="ecb">ECB</option>
-        <option value="cbc">CBC</option>
-        <option value="counter">Counter</option>
-      </select>
-      <input
-        value={to}
-        onChange={(e) => setEncryptKey(e.target.value)}
-        placeholder="Encrypt key..."
-        disabled={!encryptMode}
-      />
       <button type="button" onClick={sendEmail}>
         Submit
       </button>
