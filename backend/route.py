@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import cross_origin
 import mail
+import algorithms.feistel as feistel
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -14,8 +15,13 @@ def send():
     to = body['to']
     subject = body['subject']
     message = body['message']
+    encrypt_key = body['encryptKey']
+    encrypt_mode = body['encryptMode']
     
     try:
+        if (encrypt_key is not None and encrypt_mode is not None):
+            message = feistel.encrypt(encrypt_key, message, encrypt_mode)
+
         m.send(to, subject, message)
         return jsonify({"status": "200", "message": "Success sent email"})
         
