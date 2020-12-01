@@ -64,10 +64,6 @@ Contoh respond
 }
 ```
 
-## Database
-
-Pake mongodb. Tabel dan cluster akan otomatis kebuah setiap berhasil kirim pesan pake `POST` request ke `/send`. <i>Make sure</i> db-nya jalan aja.
-
 ## Env
 
 Bikin `.env` ya pake contoh yang di `.env.example`. Jangan lupa setting akun gmail biar [<i>less secure</i>](https://support.google.com/a/answer/6260879?hl=en)
