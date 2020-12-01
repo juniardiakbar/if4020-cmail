@@ -35,6 +35,9 @@ class SHA3():
     def __str__(self):
         return self.output
     
+    def __call__(self):
+        return self
+    
     def init_state(self):
         state_ = []
         for x in range(5):
@@ -178,9 +181,9 @@ class SHA3():
         value = r[0:self.output]
         return binary_to_hex(value)
 
-if (__name__=="__main__"):
-    hash_this = 'Hello'
 
+if (__name__=="__main__"):
+    hash_this = 'hello'
     sha = SHA3(224)
     hashed = sha.hash(hash_this)
     print(sha.__str__(), hashed)
