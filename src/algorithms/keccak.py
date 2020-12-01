@@ -30,9 +30,8 @@ def bits_to_bytes(x):
     return (int(x) + 7) // 8
 
 def rotate_left(val, left, bits):
-    bits -= left
-    first_part = (val >> left)
-    second_part = (val & MASKCONSTANTS[bits]) << left
+    first_part = val >> (bits - left)
+    second_part = (val & MASKCONSTANTS[bits - left]) << left
     return first_part | second_part
 
 def rotate_right(val, right, bits):
@@ -260,5 +259,3 @@ if __name__=="__main__":
     pt = "test"
     h1 = Keccak224(pt).hexdigest()
     print(h1)
-    h2 = Keccak256(pt).digest()
-    print(h2)
