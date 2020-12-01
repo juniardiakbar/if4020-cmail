@@ -1,5 +1,4 @@
-class RF: # A python implementation of Residue field GF(p)
-    
+class RF:
     def __init__(self, data, modulo):
         assert isinstance(data, int) and isinstance(modulo, int)
         self.data = data % modulo
@@ -77,14 +76,14 @@ class RF: # A python implementation of Residue field GF(p)
         return self(y0)
 
 # if __name__ == '__main__':
-#     # a = RF(3, 23)
-#     # b = RF(5, 23)
-#     # print('a', a)
-#     # print('b', b)
-#     # print('a+b', a+b)
-#     # print('a-b', a-b)
-#     # print('a*b', a*b)
-#     # print('a/b', a/b)
-#     # print('a/a', a/a)
-#     # print('a^3', a**3)
-#     # print('a^-1', a**-1)
+#     a = RF(3, 23)
+#     b = RF(5, 23)
+#     print('a', a)
+#     print('b', b)
+#     print('a+b', a+b)
+#     print('a-b', a-b)
+#     print('a*b', a*b)
+#     print('a/b', a/b)
+#     print('a/a', a/a)
+#     print('a^3', a**3)
+#     print('a^-1', a**-1)
