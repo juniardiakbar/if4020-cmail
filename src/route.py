@@ -1,12 +1,10 @@
 from flask import Flask, request, jsonify
 import mail
-import db
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
 m = mail.Mail()
-d = db.Database()
 
 @app.route('/send', methods=['POST'])
 def send():
@@ -16,11 +14,9 @@ def send():
     message = body['message']
     
     try:
-        if m.send(to, subject, message):
-            return jsonify({"status": "200", "message": "Success sent email"})
-        else:
-            return jsonify({"status": "500", "message": "Fail sent email"})
-
+        m.send(to, subject, message)
+        return jsonify({"status": "200", "message": "Success sent email"})
+        
     except Exception as e:
         print("ERROR WHILE SEND MAIL")
         print(e)
@@ -43,12 +39,12 @@ def sent():
     page = request.args.get('page')
     if (page is None): page = 1
     try:
-        data = d.sent(page)
-        return jsonify({"status": "200", "message": "Success get sent message", "data": data})
+        data = m.sent(page)
+        return jsonify({"status": "200", "message": "Success get sent mail", "data": data})
 
     except Exception as e:
         print(e)
-        return jsonify({"status": "500", "message": "Error occured when get sent message"})
+        return jsonify({"status": "500", "message": "Error occured when get sent mail"})
 
 if __name__ == '__main__':
     app.run(debug=True)
