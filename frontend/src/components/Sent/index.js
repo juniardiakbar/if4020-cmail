@@ -3,13 +3,15 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import "../Inbox/styles.scss";
 
-function Send() {
+function Sent({ encryptKey, encryptMode }) {
   const [inbox, setInbox] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
   const refresh = () => {
-    fetch("http://127.0.0.1:5000/sent")
+    fetch(
+      `http://127.0.0.1:5000/sent?encryptKey=${encryptKey}&encryptMode=${encryptMode}`
+    )
       .then((response) => response.json())
       .then(({ data }) => setInbox(data));
     setHasMore(true);
@@ -19,7 +21,11 @@ function Send() {
   useEffect(refresh, []);
 
   const getMoreInbox = () => {
-    fetch(`http://127.0.0.1:5000/sent?page=${page + 1}`)
+    fetch(
+      `http://127.0.0.1:5000/sent?encryptKey=${encryptKey}&encryptMode=${encryptMode}&page=${
+        page + 1
+      }`
+    )
       .then((response) => response.json())
       .then(({ data }) => {
         setHasMore(hasMore && data.length);
@@ -30,7 +36,6 @@ function Send() {
 
   const renderItems = () => (
     <InfiniteScroll
-      style={{ height: "50%" }}
       dataLength={inbox.length}
       next={getMoreInbox}
       hasMore={hasMore}
@@ -51,9 +56,9 @@ function Send() {
       }
     >
       {inbox &&
-        inbox.map(({ to, subject, body }) => (
+        inbox.map(({ from, subject, body }) => (
           <div className="email">
-            <div className="from">{to}</div>
+            <div className="from">{from}</div>
             <div className="subject">{subject}</div>
             <div className="body">{body}</div>
           </div>
@@ -69,4 +74,4 @@ function Send() {
   );
 }
 
-export default Send;
+export default Sent;

@@ -10,6 +10,7 @@
 }
 
 .App-header {
+  padding-top: 4rem;
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -38,4 +39,20 @@ input,
 button,
 select {
   font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+  float: right;
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+
+  &:hover {
+    background-color: #4cbf50;
+  }
 }

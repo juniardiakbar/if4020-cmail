@@ -7,6 +7,7 @@ function Send({ encryptKey, encryptMode }) {
   const [to, setTo] = useState("");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
+  const [sign, setSign] = useState(false);
 
   const sendEmail = () => {
     fetch("http://127.0.0.1:5000/send", {
@@ -20,6 +21,7 @@ function Send({ encryptKey, encryptMode }) {
         message: content,
         encryptKey,
         encryptMode,
+        sign
       }),
     })
       .then((response) => response.json())
@@ -64,6 +66,10 @@ function Send({ encryptKey, encryptMode }) {
           placeholder="Email content..."
         />
       </div>
+      <span className="sign" onClick={() => setSign(!sign)}>
+        <span>Sign email?</span>
+        <input className="checkbox" type="checkbox" checked={sign} />
+      </span>
       <button type="button" onClick={sendEmail}>
         Submit
       </button>

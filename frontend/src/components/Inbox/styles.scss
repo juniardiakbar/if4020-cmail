@@ -1,3 +1,26 @@
+.modal {
+  position: absolute;
+  left: 30%;
+  right: 30%;
+  top: 20%;
+  bottom: 60%;
+  background-color: #fff;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 97, 0.5);
+  overflow: auto;
+  border-radius: 4px;
+  outline: none;
+
+  .signature-key {
+    width: 94%;
+    margin: 1rem;
+    float: left;
+
+    input {
+      margin-left: 0.5rem;
+    }
+  }
+}
+
 form {
   width: 40rem;
 
@@ -21,6 +44,10 @@ form {
     padding: 1rem;
     color: black;
     margin-bottom: 2rem;
+
+    .signature {
+      float: right;
+    }
 
     .subject {
       margin-top: 0.5rem;

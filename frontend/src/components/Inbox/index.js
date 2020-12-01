@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Modal from "react-modal";
 
 import "./styles.scss";
 
@@ -7,6 +8,12 @@ function Send({ encryptKey, encryptMode }) {
   const [inbox, setInbox] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
+  const [signatureKey, setSignatureKey] = useState("");
+
+  // Possible buat diganti kalo dah ada API nya
+  const [signatureMessage, setSignatureMessage] = useState("");
 
   const refresh = () => {
     fetch(
@@ -19,6 +26,26 @@ function Send({ encryptKey, encryptMode }) {
   };
 
   useEffect(refresh, []);
+
+  const checkSignature = (id, key) => {
+    setSignatureMessage("Checking...");
+    fetch("http://127.0.0.1:5000/checkSignature", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // Parameternya ganti kalo dah ada API nya
+        id,
+        key,
+      }),
+    })
+      .then((response) => response.json())
+      .then(({ message }) => {
+        // Response ganti kalo dah ada API nya
+        setSignatureMessage(message);
+      });
+  };
 
   const getMoreInbox = () => {
     fetch(
@@ -36,7 +63,6 @@ function Send({ encryptKey, encryptMode }) {
 
   const renderItems = () => (
     <InfiniteScroll
-      style={{ height: "50%" }}
       dataLength={inbox.length}
       next={getMoreInbox}
       hasMore={hasMore}
@@ -57,8 +83,20 @@ function Send({ encryptKey, encryptMode }) {
       }
     >
       {inbox &&
-        inbox.map(({ from, subject, body }) => (
+        inbox.map(({ from, subject, body, signature, id }) => (
           <div className="email">
+            {signature && (
+              <button
+                type="button"
+                className="signature"
+                onClick={() => {
+                  setSelectedMessageId(id);
+                  setModalOpen(true);
+                }}
+              >
+                Check Signature
+              </button>
+            )}
             <div className="from">{from}</div>
             <div className="subject">{subject}</div>
             <div className="body">{body}</div>
@@ -68,10 +106,33 @@ function Send({ encryptKey, encryptMode }) {
   );
 
   return (
-    <form>
-      <div className="title">Inbox</div>
-      {renderItems()}
-    </form>
+    <div>
+      <Modal
+        className="modal"
+        isOpen={modalOpen}
+        onRequestClose={() => setModalOpen(false)}
+        contentLabel="Check Signature"
+      >
+        <span className="signature-key">
+          <span>Signature Key</span>
+          <input
+            onChange={(e) => setSignatureKey(e.target.value)}
+            placeholder="Input key here..."
+          />
+          <button
+            type="button"
+            onClick={() => checkSignature(selectedMessageId, signatureKey)}
+          >
+            Submit
+          </button>
+          <div>{signatureMessage}</div>
+        </span>
+      </Modal>
+      <form>
+        <div className="title">Inbox</div>
+        {renderItems()}
+      </form>
+    </div>
   );
 }
 
