@@ -34,12 +34,6 @@ def rotate_left(val, left, bits):
     second_part = (val & MASKCONSTANTS[bits - left]) << left
     return first_part | second_part
 
-def rotate_right(val, right, bits):
-    bits -= right
-    first_part = val >> right;
-    second_part = (val & MASKCONSTANTS[right]) << bits
-    return first_part | second_part
-
 def multirate_padding(used_bytes, align_bytes):
     diff = align_bytes - used_bytes
     if (diff == 0):
