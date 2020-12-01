@@ -34,7 +34,7 @@ function Send() {
       dataLength={inbox.length}
       next={getMoreInbox}
       hasMore={hasMore}
-      loader={<h4>Membuka pesan...</h4>}
+      loader={<p>Membuka pesan...</p>}
       endMessage={
         <p style={{ textAlign: "center" }}>
           <b>--- semua pesan sudah terbaca ---</b>
