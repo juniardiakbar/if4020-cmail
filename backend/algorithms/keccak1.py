@@ -250,6 +250,6 @@ Keccak384 = KeccakHash.preset(832, 768, 384)
 Keccak512 = KeccakHash.preset(576, 1024, 512)
 
 if __name__=="__main__":
-    pt = "test"
+    pt = bytes("test", 'ascii')
     h1 = Keccak224(pt).hexdigest()
-    print(h1)
+    # print(h1)
