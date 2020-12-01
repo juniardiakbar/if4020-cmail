@@ -63,7 +63,6 @@ class SHA3():
 
     def change_conventions(self, state):
         state_ = self.init_state()
-
         for x in range(2, 7):
             for y in range(2, 7):
                 state_[x-2][y-2] = list(self.lane(state, x%5, y%5))
@@ -79,7 +78,6 @@ class SHA3():
             return self.xor_2(val_1, val_2)
 
         state_ = self.init_state()
-
         for x in range(5):
             for y in range(5):
                 for z in range(64):
@@ -95,7 +93,6 @@ class SHA3():
         for x in range(5):
             for y in range(5):
                 state_[y][((2*x) + (3*y)) %5] = list(self.rot(self.lane(state, x, y), rot_vals[(y+2)%5][(x+2)%5]%64))
-
         return state_
 
     def pi(self, state):
@@ -173,13 +170,13 @@ class SHA3():
         message = self.preprocess(message)
         r = '0' * self.rate
         c = '0' * self.capacity
+        
         for block in message:
             f_inp = self.xor_2(block, r)
             r, c = self.f(f_inp, c)
 
         value = r[0:self.output]
         return binary_to_hex(value)
-
 
 if (__name__=="__main__"):
     hash_this = 'Hello'
