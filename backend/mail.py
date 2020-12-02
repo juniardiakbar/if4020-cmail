@@ -175,7 +175,7 @@ class Mail:
                     email_to = msg['bcc']
 
                     type_email = email_subject.split(" - ")
-                    if (type_email[0] == "ENC" and encrypt_key != "" and encrypt_mode != ""):
+                    if ((type_email[0] == "ENC" or type_email[0] == "DSENC") and encrypt_key != "" and encrypt_mode != ""):
                         email_body = email_body.rstrip("\r\n")
                         email_body = email_body.replace("\r\n", "\n")
                         email_body = feistel.decrypt(encrypt_key, email_body, encrypt_mode)
