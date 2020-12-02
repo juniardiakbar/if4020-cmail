@@ -66,7 +66,7 @@ def inbox():
     encrypt_mode = request.args.get('encryptMode')
 
     if (page is None): page = 1
-    try
+    try:
         data = m.inbox(page, encrypt_key, encrypt_mode)
         return jsonify({"status": "200", "message": "Success get inbox", "data": data})
 
