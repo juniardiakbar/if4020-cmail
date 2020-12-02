@@ -66,13 +66,13 @@ def inbox():
     encrypt_mode = request.args.get('encryptMode')
 
     if (page is None): page = 1
-    # try
-    data = m.inbox(page, encrypt_key, encrypt_mode)
-    return jsonify({"status": "200", "message": "Success get inbox", "data": data})
+    try
+        data = m.inbox(page, encrypt_key, encrypt_mode)
+        return jsonify({"status": "200", "message": "Success get inbox", "data": data})
 
-    # except Exception as e:
-    #     print(e)
-    #     return jsonify({"status": "500", "message": "Error occured when get inbox"})
+    except Exception as e:
+        print(e)
+        return jsonify({"status": "500", "message": "Error occured when get inbox"})
 
 @app.route('/verify', methods=['POST'])
 @cross_origin(origin='localhost')
@@ -81,30 +81,30 @@ def verify():
     message_id = body['id']
     siganture_key = body['key']
     
-    # try:
-    data = m.inbox_by_id(message_id)
+    try:
+        data = m.inbox_by_id(message_id)
 
-    message = str.encode(data["originalMessage"])
-    signature_tuple = data["signatureTuple"]
-    uid = str.encode(data["from"])
+        message = str.encode(data["originalMessage"])
+        signature_tuple = data["signatureTuple"]
+        uid = str.encode(data["from"])
 
-    signature_list = siganture_key.split(";")
-    print(signature_list)
-    x = int(signature_list[0])
-    y = int(signature_list[1])
-    key = ecc.ECC(a=s._a, b=s._b, field=s._RF_q, x=x, y=y)
-    verify = s.verify(message, signature_tuple, uid, key)
+        signature_list = siganture_key.split(";")
+        print(signature_list)
+        x = int(signature_list[0])
+        y = int(signature_list[1])
+        key = ecc.ECC(a=s._a, b=s._b, field=s._RF_q, x=x, y=y)
+        verify = s.verify(message, signature_tuple, uid, key)
 
-    if (verify):
-        return_message = "Verify!"
-    else:
-        return_message = "Not Verify!"
+        if (verify):
+            return_message = "Verify!"
+        else:
+            return_message = "Not Verify!"
 
-    return jsonify({"status": "200", "message": return_message, "data": verify})
+        return jsonify({"status": "200", "message": return_message, "data": verify})
 
-    # except Exception as e:
-    #     print(e)
-    #     return jsonify({"status": "500", "message": "Error occured when get sent mail"})
+    except Exception as e:
+        print(e)
+        return jsonify({"status": "500", "message": "Error occured when verify mail"})
 
 @app.route('/sent', methods=['GET'])
 @cross_origin(origin='localhost')
