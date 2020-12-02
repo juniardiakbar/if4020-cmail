@@ -68,27 +68,3 @@ class SM2_DSA(SM2):
             sign = f.read()
         r, s = sign[:self._byteLen], sign[self._byteLen:]
         return self.verify(data, (r, s), uid, PK)
-    
-
-if __name__ == '__main__':
-    message = b'jancok'
-    uid = b'irfan@gmail.com'
-    sm2_dsa = SM2_DSA()
-    sk, pk = sm2_dsa.generate_keys()
-
-    duplicate_key = ECC(a=sm2_dsa._a, b=sm2_dsa._b, field=sm2_dsa._RF_q, x=pk.x, y=pk.y)
-
-    print(type(sk))
-    print("KUNCI", type(pk), "a=",pk.a, "b=",pk.b, "f=",pk.field, "x=",pk.x, "y=",pk.y)
-    print("DUP KUNCI", type(duplicate_key), "a=",duplicate_key.a, "b=",duplicate_key.b, "f=",duplicate_key.field, "x=",duplicate_key.x, "y=",duplicate_key.y)
-    sign = sm2_dsa.sign(message, uid, sk)
-    sign_str = str(int.from_bytes(sign[0], "little")) + ';' + str(int.from_bytes(sign[1], "little"))
-
-    t1, t2 = sign_str.split(';')
-    t1 = int(t1).to_bytes(max(8, (int(t1).bit_length() + 7) // 8), "little")
-    t2 = int(t2).to_bytes(max(8, (int(t2).bit_length() + 7) // 8), "little")
-
-    test_tuple = (bytes(t1), bytes(t2))
-
-    print(sign_str)
-    print(sm2_dsa.verify(message, test_tuple, uid, pk))

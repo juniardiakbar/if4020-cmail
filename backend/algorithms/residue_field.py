@@ -74,16 +74,3 @@ class RF:
             r1, r0 = r0, r1%r0
         assert r1 == 1
         return self(y0)
-
-# if __name__ == '__main__':
-#     a = RF(3, 23)
-#     b = RF(5, 23)
-#     print('a', a)
-#     print('b', b)
-#     print('a+b', a+b)
-#     print('a-b', a-b)
-#     print('a*b', a*b)
-#     print('a/b', a/b)
-#     print('a/a', a/a)
-#     print('a^3', a**3)
-#     print('a^-1', a**-1)
