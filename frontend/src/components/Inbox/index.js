@@ -81,6 +81,15 @@ function Send() {
     setPage(page + 1);
   };
 
+  const onFileChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      setSignatureKey(event.target.result);
+    };
+    reader.readAsText(file);
+  };
+
   const renderItems = () => (
     <>
       <Row>
@@ -185,11 +194,14 @@ function Send() {
             <Input
               id="signatureKey"
               placeholder="Kunci Verifikasi.."
+              value={signatureKey}
               onChange={(e) => setSignatureKey(e.target.value)}
             />
             <FormText>Format: x;y. Contoh: 123;987</FormText>
           </FormGroup>
+          <input type="file" onChange={onFileChange} />
           <Button
+            style={{ float: "right" }}
             color="primary"
             onClick={() => {
               checkSignature(selectedMessageId, signatureKey);

@@ -57,6 +57,15 @@ function Send() {
       });
   };
 
+  const onFileChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      setSignKey(event.target.result);
+    };
+    reader.readAsText(file);
+  };
+
   return (
     <Container>
       <Row>
@@ -106,7 +115,7 @@ function Send() {
             <Label for="encryptKey">Kunci Enkripsi:</Label>
             <Input
               id="encryptKey"
-              placeholder="kunci..."
+              placeholder="Kunci..."
               onChange={(e) => setEncryptKey(e.target.value)}
             />
           </FormGroup>
@@ -137,9 +146,15 @@ function Send() {
           <FormGroup hidden={!sign}>
             <Label for="signKey">Kunci Tanda Tangan:</Label>
             <Input
+              value={signKey}
               id="signKey"
-              placeholder="kunci..."
+              placeholder="Kunci..."
               onChange={(e) => setSignKey(e.target.value)}
+            />
+            <input
+              style={{ marginTop: "1rem" }}
+              type="file"
+              onChange={onFileChange}
             />
           </FormGroup>
           <Button color="primary" onClick={() => sendEmail()}>
