@@ -1,4 +1,4 @@
-import "./App.scss";
+// import "./App.scss";
 
 import { useState } from "react";
 
@@ -15,22 +15,21 @@ const PAGE_CLASS = {
 
 function App() {
   const [page, setPage] = useState("send");
-  const [encryptKey, setEncryptKey] = useState("");
-  const [encryptMode, setEncryptMode] = useState("");
-
   const PageClass = PAGE_CLASS[page];
 
   return (
     <div className="App">
-      <NavBar
-        page={page}
-        setPage={setPage}
-        setEncryptKey={setEncryptKey}
-        setEncryptMode={setEncryptMode}
-        encryptMode={encryptMode}
-      />
+      <NavBar page={page} setPage={setPage} />
       <header className="App-header">
-        <PageClass encryptKey={encryptKey} encryptMode={encryptMode} />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: 24,
+          }}
+        >
+          <PageClass />
+        </div>
       </header>
     </div>
   );

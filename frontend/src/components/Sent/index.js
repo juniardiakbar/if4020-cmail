@@ -1,12 +1,27 @@
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import {
+  Card,
+  Button,
+  CardTitle,
+  CardText,
+  CardHeader,
+  CardBody,
+  FormGroup,
+  Input,
+  CustomInput,
+  Row,
+  Col,
+  Container,
+} from "reactstrap";
 
-import "../Inbox/styles.scss";
-
-function Sent({ encryptKey, encryptMode }) {
+function Sent({}) {
   const [inbox, setInbox] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+
+  const [encryptKey, setEncryptKey] = useState("");
+  const [encryptMode, setEncryptMode] = useState("");
 
   const refresh = () => {
     fetch(
@@ -35,42 +50,93 @@ function Sent({ encryptKey, encryptMode }) {
   };
 
   const renderItems = () => (
-    <InfiniteScroll
-      dataLength={inbox.length}
-      next={getMoreInbox}
-      hasMore={hasMore}
-      loader={<p>Membuka pesan...</p>}
-      endMessage={
-        <p style={{ textAlign: "center" }}>
-          <b>--- semua pesan sudah terbaca ---</b>
-        </p>
-      }
-      refreshFunction={refresh}
-      pullDownToRefresh
-      pullDownToRefreshThreshold={50}
-      pullDownToRefreshContent={
-        <h3 style={{ textAlign: "center" }}>&#8595; Tarik untuk me-refresh</h3>
-      }
-      releaseToRefreshContent={
-        <h3 style={{ textAlign: "center" }}>&#8593; Lepas untuk me-refresh</h3>
-      }
-    >
-      {inbox &&
-        inbox.map(({ from, subject, body }) => (
-          <div className="email">
-            <div className="from">{from}</div>
-            <div className="subject">{subject}</div>
-            <div className="body">{body}</div>
-          </div>
-        ))}
-    </InfiniteScroll>
+    <>
+      <Row>
+        <Col>
+          <FormGroup>
+            <Input
+              id="encryptKey"
+              placeholder="Kunci Dekripsi.."
+              onChange={(e) => setEncryptKey(e.target.value)}
+            />
+          </FormGroup>
+        </Col>
+        <Col>
+          <FormGroup>
+            <CustomInput
+              type="select"
+              id="encryptMode"
+              name="encryptMode"
+              onChange={(e) => setEncryptMode(e.target.value)}
+            >
+              <option value="">Select Mode</option>
+              <option value="ebc">EBC</option>
+              <option value="cbc">CBC</option>
+              <option value="counter">Counter</option>
+            </CustomInput>
+          </FormGroup>
+        </Col>
+        <Col>
+          <Button
+            color="primary"
+            onClick={() => {
+              refresh();
+              setInbox([]);
+            }}
+          >
+            Submit
+          </Button>
+        </Col>
+      </Row>
+
+      <InfiniteScroll
+        dataLength={inbox.length}
+        next={getMoreInbox}
+        hasMore={hasMore}
+        loader={<p>Membuka pesan...</p>}
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>--- semua pesan sudah terbaca ---</b>
+          </p>
+        }
+        refreshFunction={refresh}
+        pullDownToRefresh
+        pullDownToRefreshThreshold={50}
+        pullDownToRefreshContent={
+          <h3 style={{ textAlign: "center" }}>
+            &#8595; Tarik untuk me-refresh
+          </h3>
+        }
+        releaseToRefreshContent={
+          <h3 style={{ textAlign: "center" }}>
+            &#8593; Lepas untuk me-refresh
+          </h3>
+        }
+      >
+        {inbox &&
+          inbox.map(({ to, subject, body }) => (
+            <Card style={{ marginBottom: 16 }}>
+              <CardHeader>
+                <CardTitle tag="h5">{to}</CardTitle>
+                <CardTitle tag="h6">{subject}</CardTitle>
+              </CardHeader>
+              <CardBody>
+                <CardText style={{ whiteSpace: "pre-line" }}>{body}</CardText>
+              </CardBody>
+            </Card>
+          ))}
+      </InfiniteScroll>
+    </>
   );
 
   return (
-    <form>
-      <div className="title">Sent</div>
-      {renderItems()}
-    </form>
+    <Container>
+      <Row>
+        <Col sm="12" md={{ size: 6, offset: 3 }}>
+          {renderItems()}
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

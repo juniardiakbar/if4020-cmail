@@ -1,46 +1,48 @@
-import "./styles.scss";
+import React, { useState } from "react";
+import {
+  Container,
+  Collapse,
+  Navbar,
+  NavbarToggler,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+} from "reactstrap";
 
-function NavBar({ page, setPage, setEncryptKey, encryptMode, setEncryptMode }) {
+function NavBar({ setPage }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggle = () => setIsOpen(!isOpen);
+
   return (
-    <ul>
-      <li>
-        <span
+    <Navbar color="light" light expand="md">
+      <Container>
+        <NavbarBrand
           onClick={() => setPage("send")}
-          className={page === "send" ? "active" : ""}
+          style={{ cursor: "pointer" }}
         >
-          Send
-        </span>
-      </li>
-      <li>
-        <span
-          onClick={() => setPage("sent")}
-          className={page === "sent" ? "active" : ""}
-        >
-          Sent
-        </span>
-      </li>
-      <li>
-        <span
-          onClick={() => setPage("inbox")}
-          className={page === "inbox" ? "active" : ""}
-        >
-          Inbox
-        </span>
-      </li>
-      <span className="encryption">
-        <select onChange={(e) => setEncryptMode(e.target.value)}>
-          <option value="">-- encrypt mode --</option>
-          <option value="ecb">ECB</option>
-          <option value="cbc">CBC</option>
-          <option value="counter">Counter</option>
-        </select>
-        <input
-          onChange={(e) => setEncryptKey(e.target.value)}
-          placeholder="Encrypt key..."
-          disabled={!encryptMode}
-        />
-      </span>
-    </ul>
+          cMail
+        </NavbarBrand>
+        <NavbarToggler onClick={toggle} />
+        <Collapse isOpen={isOpen} navbar>
+          <Nav className="mr-auto" navbar>
+            <NavItem
+              onClick={() => setPage("inbox")}
+              style={{ cursor: "pointer" }}
+            >
+              <NavLink>Inbox</NavLink>
+            </NavItem>
+            <NavItem
+              onClick={() => setPage("sent")}
+              style={{ cursor: "pointer" }}
+            >
+              <NavLink>Sent Mail</NavLink>
+            </NavItem>
+          </Nav>
+        </Collapse>
+      </Container>
+    </Navbar>
   );
 }
 
