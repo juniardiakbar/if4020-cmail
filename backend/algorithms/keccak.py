@@ -180,22 +180,3 @@ class SHA3():
 
         value = r[0:self.output]
         return binary_to_hex(value)
-
-
-if (__name__=="__main__"):
-    hash_this = 'hello'
-    sha = SHA3(224)
-    hashed = sha.hash(hash_this)
-    print(sha.__str__(), hashed)
-
-    sha = SHA3(256)
-    hashed = sha.hash(hash_this)
-    print(sha.__str__(), hashed)
-
-    sha = SHA3(384)
-    hashed = sha.hash(hash_this)
-    print(sha.__str__(), hashed)
-
-    sha = SHA3(512)
-    hashed = sha.hash(hash_this)
-    print(sha.__str__(), hashed)

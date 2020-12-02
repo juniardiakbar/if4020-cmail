@@ -84,24 +84,3 @@ class bitarray:
             return bitarray()
         else:
             return bitarray(int(str(self)[::-1], 2), self._length)
-
-
-if __name__ == '__main__':
-    a = bitarray(0b011001, 6)
-    b = bitarray(0b011110, 6)
-    print('a', a)
-    print('b', b)
-    print('~a', ~a)
-    print('a+b', a+b)
-    print('a&b', a&b)
-    print('a|b', a|b)
-    print('a^b', a^b)
-    print('a>>1', a>>1)
-    print('a<<1', a<<1)
-    print('concat(a,b)', bitarray.concat((a, b)))
-    print('a.split(2)', a.split(2))
-    print('a[1:4]', a[1:4])
-    print('a[4]', a[4])
-    print('a.to_integer()', a.to_integer())
-    print('a.to_bytes()', a.to_bytes())
-    print('bitarray.from_bytes(b\'\\x19\')', bitarray.from_bytes(b'\x19'))
