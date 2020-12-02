@@ -29,20 +29,18 @@ function Send({ encryptKey, encryptMode }) {
 
   const checkSignature = (id, key) => {
     setSignatureMessage("Checking...");
-    fetch("http://127.0.0.1:5000/checkSignature", {
+    fetch("http://127.0.0.1:5000/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // Parameternya ganti kalo dah ada API nya
         id,
         key,
       }),
     })
       .then((response) => response.json())
       .then(({ message }) => {
-        // Response ganti kalo dah ada API nya
         setSignatureMessage(message);
       });
   };

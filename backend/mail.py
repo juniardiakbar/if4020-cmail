@@ -55,6 +55,7 @@ class Mail:
         status, data = mail.search(None, 'ALL')
         mail_ids = data[0]
         id_list = mail_ids.split()
+        id_list = id_list[::-1]
 
         page = int(page)
         i = (page - 1) * self.limit
@@ -64,6 +65,8 @@ class Mail:
             
             for response_part in data:
                 if isinstance(response_part, tuple):
+                    sign = False
+                    
                     msg = email.message_from_string(codecs.decode(response_part[1],'utf-8'))
                     email_subject = msg['subject']
                     email_body = get_mail_body(msg)
@@ -74,12 +77,16 @@ class Mail:
                         email_body = email_body.rstrip("\r\n")
                         email_body = email_body.replace("\r\n", "\n")
                         email_body = feistel.decrypt(encrypt_key, email_body, encrypt_mode)
+                    
+                    if (type_email[0] == "DS" or type_email[0] == "DSENC"):
+                        sign = True
 
                     obj = {}
                     obj["id"] = str(int(id_list[i]))
                     obj["from"] = email_from
                     obj["subject"] = email_subject
                     obj["body"] = email_body
+                    obj["signature"] = sign
 
                     output.append(obj)
 
@@ -87,6 +94,49 @@ class Mail:
             count += 1
 
         return output
+    
+    def inbox_by_id(self, message_id):
+        mail = imaplib.IMAP4_SSL(self.imap)
+        mail.login(self.email, self.password)
+        mail.select('"inbox"')
+
+        status, data = mail.fetch(str.encode(str(int(message_id))), '(RFC822)')
+
+        obj = {}
+        for response_part in data:
+            if isinstance(response_part, tuple):
+                msg = email.message_from_string(codecs.decode(response_part[1],'utf-8'))
+                email_subject = msg['subject']
+                email_body = get_mail_body(msg)
+                email_from = msg['from']
+
+                type_email = email_subject.split(" - ")
+                
+                if (type_email[0] == "DS" or type_email[0] == "DSENC"):
+                    email_body_list = email_body.split("--BEGIN SIGNATURE SIGN--\r\n")
+
+                    message_body = email_body_list[0]
+                    message_body = message_body.rstrip("\r\n")
+                    message_body = message_body.replace("\r\n", "\n")
+
+                    signature_body = email_body_list[1]
+                    signature_body = signature_body.split("\n--END SIGNATURE SIGN--")[0]
+                    
+                    t1, t2 = signature_body.split(';')
+                    print(t1,t2)
+                    t1 = int(t1).to_bytes(max(8, (int(t1).bit_length() + 7) // 8), "little")
+                    t2 = int(t2).to_bytes(max(8, (int(t2).bit_length() + 7) // 8), "little")
+
+                    signature_tuple = (bytes(t1), bytes(t2))
+
+                obj["id"] = str(int(message_id))
+                obj["from"] = email_from
+                obj["subject"] = email_subject
+                obj["body"] = email_body
+                obj["originalMessage"] = message_body
+                obj["signatureTuple"] = signature_tuple
+
+        return obj
 
     def sent(self, page=1, encrypt_key="", encrypt_mode=""):
         output = []
@@ -98,6 +148,7 @@ class Mail:
         status, data = mail.search(None, 'ALL')
         mail_ids = data[0]
         id_list = mail_ids.split()
+        id_list = id_list[::-1]
 
         page = int(page)
         i = (page - 1) * self.limit

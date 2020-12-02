@@ -4,8 +4,6 @@ import random
 import hashlib
 import codecs
 from algorithms.keccak import SHA3
-# from keccak1 import Keccak512
-
 from algorithms.bitarray import bitarray
 from algorithms.residue_field import RF
 from algorithms.ecc import ECC
