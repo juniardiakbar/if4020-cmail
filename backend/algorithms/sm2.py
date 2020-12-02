@@ -16,58 +16,6 @@ class SM2:
         self._HashFunc = SHA3(512).hash
         self._v = 512
     
-    def encrypt_file(self, fn:str, PK:ECC):
-        fdir, out_fn = os.path.split(fn)
-        out_fn = 'output_' + out_fn
-        out_fn = os.path.join(fdir, out_fn)
-        output = open(out_fn, 'wb')
-        with open(fn, 'rb') as fin:
-            M = fin.read()
-            M = self._bytes2bits(M)
-            C = self.encrypt_data(M, PK)
-            C = self._bits2bytes(C)
-            output.write(C)
-        output.close()
-    
-    def decrypt_file(self, fn:str, SK:int):
-        fdir, out_fn = os.path.split(fn)
-        out_fn = 'output_' + out_fn
-        out_fn = os.path.join(fdir, out_fn)
-        output = open(out_fn, 'wb')
-        with open(fn, 'rb') as fin:
-            C = fin.read()
-            C = self._bytes2bits(C)
-            M = self.decrypt_data(C, SK)
-            M = self._bits2bytes(M)
-            output.write(M)
-        output.close()
-    
-    def encrypt_data(self, M:bitarray, PK:ECC) -> bitarray:
-        k = random.randint(1, self._n-1)
-        c1 = k * self._G
-        c1 = self._bytes2bits(self._point2bytes(c1))
-        p2 = k * PK
-        x2 = self._bytes2bits(self._elem2bytes(p2.x))
-        y2 = self._bytes2bits(self._elem2bytes(p2.y))
-        t = self._kdf(bitarray.concat((x2, y2)), len(M))
-        c2 = M ^ t
-        c3 = self._hash(bitarray.concat((x2, M, y2)))
-        C = bitarray.concat((c1, c3, c2))
-        return C
-    
-    def decrypt_data(self, C:bitarray, SK:int) -> bitarray:
-        c1, C = C[:self._byteLen*8*2+8], C[self._byteLen*8*2+8:]
-        c3, c2 = C[:self._v], C[self._v:]
-        c1 = self._bytes2point(self._bits2bytes(c1))
-        p2 = SK * c1
-        x2 = self._bytes2bits(self._elem2bytes(p2.x))
-        y2 = self._bytes2bits(self._elem2bytes(p2.y))
-        t = self._kdf(bitarray.concat((x2, y2)), len(c2))
-        M = c2 ^ t
-        u = self._hash(bitarray.concat((x2, M, y2)))
-        assert u == c3
-        return M
-    
     def generate_keys(self) -> tuple:
         d = random.randint(1, self._n-2)
         return (d, d * self._G)
@@ -84,28 +32,28 @@ class SM2:
                 super().__init__(data, modulo)
         self._RF_q = RF_q
     
-    def _int2bytes(self, x:int, k:int) -> bytes: # 3.2.2
+    def _int2bytes(self, x:int, k:int) -> bytes:
         return x.to_bytes(k, byteorder='big')
     
-    def _bytes2int(self, m:bytes) -> int: # 3.2.3
+    def _bytes2int(self, m:bytes) -> int:
         return int.from_bytes(m, byteorder='big')
     
-    def _bits2bytes(self, b:bitarray) -> bytes: # 3.2.4
+    def _bits2bytes(self, b:bitarray) -> bytes:
         return b.to_bytes()
     
-    def _bytes2bits(self, b:bytes) -> bitarray: # 3.2.5
+    def _bytes2bits(self, b:bytes) -> bitarray:
         return bitarray.from_bytes(b)
     
-    def _elem2bytes(self, e:RF) -> bytes: # 3.2.6
+    def _elem2bytes(self, e:RF) -> bytes:
         return self._int2bytes(e.data, self._byteLen)
     
-    def _bytes2elem(self, s:bytes) -> RF: # 3.2.7
+    def _bytes2elem(self, s:bytes) -> RF:
         return self._RF_q(self._bytes2int(s))
     
-    def _elem2int(self, e:RF) -> int: # 3.2.8
+    def _elem2int(self, e:RF) -> int:
         return e.data
     
-    def _point2bytes(self, p:ECC, method='uncompressed') -> bytes: # 3.2.9
+    def _point2bytes(self, p:ECC, method='uncompressed') -> bytes:
         assert p.isInfty == False
         x1 = self._elem2bytes(p.x)
         if method == 'uncompressed':
@@ -113,7 +61,7 @@ class SM2:
             PC = 0x04
             return bytes([PC]) + x1 + y1
     
-    def _bytes2point(self, s:bytes, method='uncompressed') -> ECC: # 3.2.10
+    def _bytes2point(self, s:bytes, method='uncompressed') -> ECC:
         PC, x1, y1 = s[0], s[1:1+self._byteLen], s[1+self._byteLen:]
         xp = self._bytes2elem(x1)
         if method == 'uncompressed':
@@ -122,12 +70,12 @@ class SM2:
         assert self._G.belong(xp, yp)
         return self._G(xp, yp)
     
-    def _hash(self, z:bitarray) -> bitarray: # 3.4.2
+    def _hash(self, z:bitarray) -> bitarray:
         z = self._bits2bytes(z)
         x = self._HashFunc(codecs.decode(z, 'ISO-8859-1'))
         return self._bytes2bits(bytes(x, 'ISO-8859-1'))
     
-    def _kdf(self, z:bitarray, klen:int) -> bitarray: # 3.4.3
+    def _kdf(self, z:bitarray, klen:int) -> bitarray:
         ct = bitarray(1, 32)
         t = bitarray()
         for i in range(math.ceil(klen/self._v)):

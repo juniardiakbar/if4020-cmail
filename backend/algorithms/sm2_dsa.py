@@ -53,18 +53,3 @@ class SM2_DSA(SM2):
         x1 = self._elem2int(P.x)
         R = (e + x1) % self._n
         return R == r
-    
-    def sign_file(self, fn:str, uid:bytes, SK:int):
-        with open(fn, 'rb') as f:
-            data = f.read()
-        r, s = self.sign(data, uid, SK)
-        with open(fn+'.sign', 'wb') as f:
-            f.write(r+s)
-    
-    def verify_file(self, fn:str, sf:str, uid:bytes, PK):
-        with open(fn, 'rb') as f:
-            data = f.read()
-        with open(sf, 'rb') as f:
-            sign = f.read()
-        r, s = sign[:self._byteLen], sign[self._byteLen:]
-        return self.verify(data, (r, s), uid, PK)
