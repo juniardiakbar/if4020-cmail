@@ -56,9 +56,9 @@ function Sent({ encryptKey, encryptMode }) {
       }
     >
       {inbox &&
-        inbox.map(({ from, subject, body }) => (
+        inbox.map(({ to, subject, body }) => (
           <div className="email">
-            <div className="from">{from}</div>
+            <div className="from">{to}</div>
             <div className="subject">{subject}</div>
             <div className="body">{body}</div>
           </div>
