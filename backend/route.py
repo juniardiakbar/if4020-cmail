@@ -122,5 +122,16 @@ def sent():
         print(e)
         return jsonify({"status": "500", "message": "Error occured when get sent mail"})
 
+@app.route('/keygen', methods=['GET'])
+@cross_origin(origin='localhost')
+def sent():
+    try:
+        sk, pk = s.generate_keys()
+        return jsonify({"status": "200", "message": "Success get keyygen", "publicKey": pk, "privatekey": sk})
+
+    except Exception as e:
+        print(e)
+        return jsonify({"status": "500", "message": "Error occured when get keygen"})
+
 if __name__ == '__main__':
     app.run(debug=True)
