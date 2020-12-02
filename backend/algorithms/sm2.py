@@ -13,7 +13,6 @@ class SM2:
         self._reset_data()
         self._G = ECC(a=self._a, b=self._b, field=self._RF_q, x=self._gx, y=self._gy)
         self._byteLen = math.ceil(math.ceil(math.log2(self._q))/8)
-        # self._HashFunc = hashlib.sha512 # longer hash accelerates this algorithm
         self._HashFunc = SHA3(512).hash
         self._v = 512
     
@@ -135,16 +134,3 @@ class SM2:
             t = bitarray.concat((t, self._hash(bitarray.concat((z, ct)))))
             ct = ct + bitarray(1, 32)
         return t[:klen]
-
-
-if __name__ == '__main__':
-    import time
-    t0 = time.time()
-    sm2 = SM2()
-    t1 = time.time()
-    sk, pk = sm2.generate_keys()
-    t2 = time.time()
-    print('Initial time:{:.5f}'.format(t1-t0))
-    print('Genkeys time:{:.5f}'.format(t2-t1))
-    # sm2.encrypt_file('../testdata/text.txt', pk)
-    # sm2.decrypt_file('../testdata/output_text.txt', sk)
