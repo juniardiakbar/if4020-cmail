@@ -33,7 +33,8 @@ def send():
             enc = True
             if (not signature):
                 subject = "ENC - " + subject 
-    
+
+            message = message.replace("\n", " ")
             message = feistel.encrypt(encrypt_key, message, encrypt_mode)
 
         if (signature):
@@ -42,7 +43,7 @@ def send():
             
             message_byte = str.encode(message)
             uid = str.encode(email)
-            sign = s.sign(message_byte, uid, signature_key)
+            sign = s.sign(message_byte, uid, int(signature_key))
             sign_str = str(int.from_bytes(sign[0], "little")) + ';' + str(int.from_bytes(sign[1], "little"))
 
             message += "\n\n--BEGIN SIGNATURE SIGN--\n"
@@ -65,13 +66,13 @@ def inbox():
     encrypt_mode = request.args.get('encryptMode')
 
     if (page is None): page = 1
-    try:
-        data = m.inbox(page, encrypt_key, encrypt_mode)
-        return jsonify({"status": "200", "message": "Success get inbox", "data": data})
+    # try
+    data = m.inbox(page, encrypt_key, encrypt_mode)
+    return jsonify({"status": "200", "message": "Success get inbox", "data": data})
 
-    except Exception as e:
-        print(e)
-        return jsonify({"status": "500", "message": "Error occured when get inbox"})
+    # except Exception as e:
+    #     print(e)
+    #     return jsonify({"status": "500", "message": "Error occured when get inbox"})
 
 @app.route('/verify', methods=['POST'])
 @cross_origin(origin='localhost')
