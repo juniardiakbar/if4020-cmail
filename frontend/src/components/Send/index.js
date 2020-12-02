@@ -64,7 +64,7 @@ function Send() {
           <FormGroup>
             <Label for="to">To:</Label>
             <Input
-              placeholder="Destinantion..."
+              placeholder="Destination..."
               valid={toValid && to !== ""}
               invalid={!toValid && to !== ""}
               onChange={(e) => {
