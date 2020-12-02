@@ -77,6 +77,16 @@ class Mail:
                         email_body = email_body.rstrip("\r\n")
                         email_body = email_body.replace("\r\n", "\n")
                         email_body = feistel.decrypt(encrypt_key, email_body, encrypt_mode)
+
+                    elif (type_email[0] == "DSENC" and encrypt_key != "" and encrypt_mode != ""):
+                        email_body_list = email_body.split("--BEGIN SIGNATURE SIGN--\r\n")
+
+                        message_body = email_body_list[0]
+                        message_body = message_body.rstrip("\r\n")
+                        message_body = message_body.replace("\r\n", "\n")
+                        message_body = feistel.decrypt(encrypt_key, message_body, encrypt_mode)
+
+                        email_body = message_body + ("\n--BEGIN SIGNATURE SIGN--\n")  + email_body_list[1]
                     
                     if (type_email[0] == "DS" or type_email[0] == "DSENC"):
                         sign = True

@@ -31,7 +31,9 @@ def send():
     try:
         if (encrypt_key != "" and encrypt_mode != ""):
             enc = True
-            subject = "ENC - " + subject 
+            if (not signature):
+                subject = "ENC - " + subject 
+    
             message = feistel.encrypt(encrypt_key, message, encrypt_mode)
 
         if (signature):
@@ -42,8 +44,6 @@ def send():
             uid = str.encode(email)
             sign = s.sign(message_byte, uid, signature_key)
             sign_str = str(int.from_bytes(sign[0], "little")) + ';' + str(int.from_bytes(sign[1], "little"))
-
-            print(sign_str)
 
             message += "\n\n--BEGIN SIGNATURE SIGN--\n"
             message += sign_str
