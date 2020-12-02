@@ -15,6 +15,7 @@ email = os.getenv("EMAIL")
 m = mail.Mail()
 s = sign.SM2_DSA()
 
+
 @app.route('/send', methods=['POST'])
 @cross_origin(origin='localhost')
 def send():
@@ -32,15 +33,17 @@ def send():
         if (encrypt_key != "" and encrypt_mode != ""):
             enc = True
             if (not signature):
-                subject = "ENC - " + subject 
+                subject = "ENC - " + subject
 
             message = message.replace("\n", " ")
             message = feistel.encrypt(encrypt_key, message, encrypt_mode)
 
         if (signature):
-            if (enc): subject = "DSENC - " + subject
-            else: subject = "DS - " + subject
-            
+            if (enc):
+                subject = "DSENC - " + subject
+            else:
+                subject = "DS - " + subject
+
             message_byte = str.encode(message)
             uid = str.encode(email)
             sign = s.sign(message_byte, uid, int(signature_key))
@@ -52,11 +55,12 @@ def send():
 
         m.send(to, subject, message)
         return jsonify({"status": "200", "message": "Success sent email"})
-    
+
     except Exception as e:
         print("ERROR WHILE SEND MAIL")
         print(e)
         return jsonify({"status": "500", "message": "Error occured when sent email"})
+
 
 @app.route('/inbox', methods=['GET'])
 @cross_origin(origin='localhost')
@@ -65,7 +69,8 @@ def inbox():
     encrypt_key = request.args.get('encryptKey')
     encrypt_mode = request.args.get('encryptMode')
 
-    if (page is None): page = 1
+    if (page is None):
+        page = 1
     try:
         data = m.inbox(page, encrypt_key, encrypt_mode)
         return jsonify({"status": "200", "message": "Success get inbox", "data": data})
@@ -74,13 +79,14 @@ def inbox():
         print(e)
         return jsonify({"status": "500", "message": "Error occured when get inbox"})
 
+
 @app.route('/verify', methods=['POST'])
 @cross_origin(origin='localhost')
 def verify():
     body = request.json
     message_id = body['id']
     siganture_key = body['key']
-    
+
     try:
         data = m.inbox_by_id(message_id)
 
@@ -106,14 +112,16 @@ def verify():
         print(e)
         return jsonify({"status": "500", "message": "Error occured when verify mail"})
 
+
 @app.route('/sent', methods=['GET'])
 @cross_origin(origin='localhost')
 def sent():
     page = request.args.get('page')
     encrypt_key = request.args.get('encryptKey')
     encrypt_mode = request.args.get('encryptMode')
-    
-    if (page is None): page = 1
+
+    if (page is None):
+        page = 1
     try:
         data = m.sent(page, encrypt_key, encrypt_mode)
         return jsonify({"status": "200", "message": "Success get sent mail", "data": data})
@@ -122,16 +130,18 @@ def sent():
         print(e)
         return jsonify({"status": "500", "message": "Error occured when get sent mail"})
 
+
 @app.route('/keygen', methods=['GET'])
 @cross_origin(origin='localhost')
-def sent():
+def keygen():
     try:
         sk, pk = s.generate_keys()
-        return jsonify({"status": "200", "message": "Success get keyygen", "publicKey": pk, "privatekey": sk})
-
+        pk = '{};{}'.format(str(pk.x), pk.y)
+        return jsonify({"status": "200", "message": "Success get keyygen", "publicKey": pk, "privateKey": str(sk)})
     except Exception as e:
         print(e)
         return jsonify({"status": "500", "message": "Error occured when get keygen"})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

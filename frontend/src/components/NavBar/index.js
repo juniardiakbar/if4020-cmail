@@ -50,7 +50,7 @@ function NavBar({ setPage }) {
 
   const downloadKeys = () => {
     downloadFile(publicKey, "key.pub");
-    downloadFile(publicKey, "key.pri");
+    downloadFile(privateKey, "key.pri");
   };
 
   return (
