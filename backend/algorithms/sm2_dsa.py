@@ -2,9 +2,9 @@
 import sys
 sys.path.append("../..")
 import random
-from bitarray import bitarray
-from exgcd import inverse
-from sm2 import SM2
+from algorithms.bitarray import bitarray
+from algorithms.exgcd import inverse
+from algorithms.sm2 import SM2
 
 class SM2_DSA(SM2):
     def __init__(self):
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     uid = b'irfan@gmail.com'
     sm2_dsa = SM2_DSA()
     sk, pk = sm2_dsa.generate_keys()
-    print(sk, pk)
+    print("KUNCI", sk, pk)
     sign = sm2_dsa.sign(message, uid, sk)
     sign_str = str(int.from_bytes(sign[0], "little")) + ';' + str(int.from_bytes(sign[1], "little"))
 

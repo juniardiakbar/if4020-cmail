@@ -3,12 +3,12 @@ import math
 import random
 import hashlib
 import codecs
-from keccak import SHA3
+from algorithms.keccak import SHA3
 # from keccak1 import Keccak512
 
-from bitarray import bitarray
-from residue_field import RF
-from ecc import ECC
+from algorithms.bitarray import bitarray
+from algorithms.residue_field import RF
+from algorithms.ecc import ECC
 
 class SM2:
     def __init__(self):
